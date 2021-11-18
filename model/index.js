@@ -34,15 +34,6 @@ const removeContact = async (contactId) => {
 }
 
 const addContact = async (body) => {
-  const REQUIRED_CONTACT_DATA = ['name', 'email', 'phone']
-
-  const bodyKeys = Object.keys(body)
-  const isValidBody = REQUIRED_CONTACT_DATA.every(item => bodyKeys.includes(item))
-
-  if (!isValidBody) {
-    return null
-  }
-
   const contactsList = await getContacts()
   await fs.writeFile(contactsPath, JSON.stringify([...contactsList, body]))
   return body
@@ -57,7 +48,7 @@ const updateContact = async (contactId, body) => {
   }
 
   contactsList[index] = { ...contactsList[index], ...body }
-  await fs.writeFile(contactsPath, JSON.stringify([...contactsList, contactsList]))
+  await fs.writeFile(contactsPath, JSON.stringify(contactsList))
 
   return contactsList[index]
 }
