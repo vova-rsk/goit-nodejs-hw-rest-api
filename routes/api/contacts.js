@@ -1,7 +1,24 @@
 const express = require('express')
 const router = express.Router()
-const api = require('../../model')
 const { v4: uuidv4 } = require('uuid')
+const Joi = require('joi')
+const api = require('../../model')
+
+const structureSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().required(),
+  phone: Joi.string().required(),
+})
+
+const valuesSchema = Joi.object({
+  name: Joi.string()
+    .min(3)
+    .max(30),
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+  phone: Joi.string()
+    .pattern(/^[0-9]{3,15}$/)
+}).required().min(1)
 
 router.get('/', async (_, res) => {
   try {
@@ -51,9 +68,9 @@ router.get('/:contactId', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const newContactInfo = req.body
-    const addedContact = await api.addContact({ id: uuidv4(), ...newContactInfo })
+    const { error: structureValidationError } = structureSchema.validate(newContactInfo)
 
-    if (!addedContact) {
+    if (structureValidationError) {
       res.status(400).json({
         status: 'error',
         code: 400,
@@ -61,6 +78,19 @@ router.post('/', async (req, res) => {
       })
       return
     }
+
+    const { error: valuesValidationError } = valuesSchema.validate(newContactInfo)
+
+    if (valuesValidationError) {
+      res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'contact info does not match minimal requirements'
+      })
+      return
+    }
+
+    const addedContact = await api.addContact({ id: uuidv4(), ...newContactInfo })
 
     res.json({
       status: 'success',
@@ -109,11 +139,17 @@ router.patch('/:contactId', async (req, res) => {
     const { contactId } = req.params
     const newContactInfo = req.body
 
-    if (Object.keys(newContactInfo).length === 0) {
+    const { error: valuesValidationError } = valuesSchema.validate(newContactInfo)
+
+    if (valuesValidationError) {
+      const message = valuesValidationError.details[0].type === 'object.min'
+        ? 'missing fields'
+        : 'contact info does not match minimal requirements'
+
       res.status(400).json({
         status: 'error',
         code: 400,
-        message: 'missing fields'
+        message
       })
       return
     }
