@@ -17,7 +17,7 @@ const valuesSchema = Joi.object({
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
   phone: Joi.string()
-    .pattern(/^[0-9]{3,15}$/)
+    .pattern(/^(\+)?(\(\d{2,3}\) ?\d|\d)(([-]?\d)|( ?\(\d{2,3}\) ?)){5,12}\d$/)
 }).required().min(1)
 
 router.get('/', async (_, res) => {
