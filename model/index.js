@@ -1,4 +1,3 @@
-// const contacts = require('./contacts.json')
 const fs = require('fs/promises')
 const path = require('path')
 
