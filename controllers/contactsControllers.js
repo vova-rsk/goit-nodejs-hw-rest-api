@@ -1,22 +1,6 @@
 const { v4: uuidv4 } = require('uuid')
-const Joi = require('joi')
 const api = require('../model')
-
-const structureSchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().required(),
-  phone: Joi.string().required(),
-})
-
-const valuesSchema = Joi.object({
-  name: Joi.string()
-    .min(3)
-    .max(30),
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-  phone: Joi.string()
-    .pattern(/^(\+)?(\(\d{2,3}\) ?\d|\d)(([-]?\d)|( ?\(\d{2,3}\) ?)){5,12}\d$/)
-}).required().min(1)
+const { contactToAddValidation, contactToPatchValidation } = require('../utils/validation')
 
 const getContacts = async (_, res) => {
   try {
@@ -66,25 +50,13 @@ const getContactById = async (req, res) => {
 const postContact = async (req, res) => {
   try {
     const newContactInfo = req.body
+    const validation = contactToAddValidation(newContactInfo)
 
-    const { error: structureValidationError } = structureSchema.validate(newContactInfo)
-
-    if (structureValidationError) {
+    if (!validation.isValid) {
       res.status(400).json({
         status: 'error',
         code: 400,
-        message: 'missing required name field'
-      })
-      return
-    }
-
-    const { error: valuesValidationError } = valuesSchema.validate(newContactInfo)
-
-    if (valuesValidationError) {
-      res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: 'contact info does not match minimal requirements'
+        message: validation.errorMessage
       })
       return
     }
@@ -137,18 +109,13 @@ const patchContact = async (req, res) => {
   try {
     const { contactId } = req.params
     const newContactInfo = req.body
+    const validation = contactToPatchValidation(newContactInfo)
 
-    const { error: valuesValidationError } = valuesSchema.validate(newContactInfo)
-
-    if (valuesValidationError) {
-      const message = valuesValidationError.details[0].type === 'object.min'
-        ? 'missing fields'
-        : 'contact info does not match minimal requirements'
-
+    if (!validation.isValid) {
       res.status(400).json({
         status: 'error',
         code: 400,
-        message
+        message: validation.errorMessage
       })
       return
     }
