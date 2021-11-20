@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require('uuid')
 const api = require('../model')
-const { contactToAddValidation, contactToPatchValidation } = require('../utils/validation')
 
 const getContacts = async (_, res) => {
   try {
@@ -50,17 +49,6 @@ const getContactById = async (req, res) => {
 const postContact = async (req, res) => {
   try {
     const newContactInfo = req.body
-    const validation = contactToAddValidation(newContactInfo)
-
-    if (!validation.isValid) {
-      res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: validation.errorMessage
-      })
-      return
-    }
-
     const addedContact = await api.addContact({ id: uuidv4(), ...newContactInfo })
 
     res.json({
@@ -105,21 +93,10 @@ const deleteContact = async (req, res) => {
   }
 }
 
-const patchContact = async (req, res) => {
+const putContact = async (req, res) => {
   try {
     const { contactId } = req.params
     const newContactInfo = req.body
-    const validation = contactToPatchValidation(newContactInfo)
-
-    if (!validation.isValid) {
-      res.status(400).json({
-        status: 'error',
-        code: 400,
-        message: validation.errorMessage
-      })
-      return
-    }
-
     const updatedContact = await api.updateContact(contactId, newContactInfo)
 
     if (!updatedContact) {
@@ -150,5 +127,5 @@ module.exports = {
   getContactById,
   postContact,
   deleteContact,
-  patchContact,
+  putContact,
 }
