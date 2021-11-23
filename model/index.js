@@ -18,6 +18,8 @@ const removeContact = async contactId => {
 }
 
 const addContact = async body => {
+  if (!body.favorite) body.favorite = false
+
   const id = await mongodbApi.addDocument(CURRENT_COLLECTION_NAME, body)
   const addedContact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, id)
   return addedContact
@@ -32,10 +34,20 @@ const updateContact = async (contactId, body) => {
   return updatedContact
 }
 
+const updateStatusContact = async (contactId, body) => {
+  const result = await mongodbApi.updateDocument(CURRENT_COLLECTION_NAME, contactId, body)
+  console.log(result)
+  if (!result) return null
+
+  const updatedContact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, contactId)
+  return updatedContact
+}
+
 module.exports = {
   listContacts,
   getContactById,
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact
 }

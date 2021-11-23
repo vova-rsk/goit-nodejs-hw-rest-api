@@ -23,7 +23,6 @@ const api = {
   },
 
   async getDocumentById(collectionName, id) {
-    console.log(typeof id)
     return await this.connection
       .db()
       .collection(collectionName)
@@ -52,9 +51,9 @@ const api = {
       .db()
       .collection(collectionName)
       .updateOne({ _id: new ObjectID(id) }, { $set: contactInfo }, { upsert: false })
-    const isUpdated = Boolean(result.modifiedCount || result.modifiedCount.matchedCount)
+    const isUpdated = Boolean(result.modifiedCount || result.matchedCount)
     return isUpdated
-  }
+  },
 }
 
 module.exports = api

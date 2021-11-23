@@ -1,4 +1,4 @@
-const contactSchema = require('../utils/validation')
+const { contactSchema, statusSchema } = require('../utils/validationSchemas')
 const createError = require('http-errors')
 
 const contactValidation = async (req, res, next) => {
@@ -18,4 +18,20 @@ const contactValidation = async (req, res, next) => {
   }
 }
 
-module.exports = contactValidation
+const statusValidation = async (req, res, next) => {
+  try {
+    const validated = statusSchema.validate(req.body)
+
+    if (validated.error) throw createError(400, validated.error.message)
+
+    req.body = validated.value
+    next()
+  } catch (err) {
+    next(err)
+  }
+}
+
+module.exports = {
+  contactValidation,
+  statusValidation
+}
