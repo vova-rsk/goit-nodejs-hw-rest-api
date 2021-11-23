@@ -1,55 +1,35 @@
-const fs = require('fs/promises')
-const path = require('path')
+const mongodbApi = require('../services')
 
-const contactsPath = path.join(__dirname, '/contacts.json')
-
-const getContacts = async () => {
-  const response = await fs.readFile(contactsPath)
-  const contacts = JSON.parse(response)
-  return contacts
-}
+const CURRENT_COLLECTION_NAME = 'contacts'
 
 const listContacts = async () => {
-  const contactsList = await getContacts()
+  const contactsList = await mongodbApi.getDocuments(CURRENT_COLLECTION_NAME)
   return contactsList
 }
 
-const getContactById = async (contactId) => {
-  const contactsList = await getContacts()
-  const contact = contactsList.find((item) => item.id.toString() === contactId)
+const getContactById = async contactId => {
+  const contact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, contactId)
   return contact
 }
 
-const removeContact = async (contactId) => {
-  const contactsList = await getContacts()
-  const contactToRemove = contactsList.find(item => item.id.toString() === contactId)
-
-  if (contactToRemove) {
-    const updatedContactsList = contactsList.filter(item => item.id.toString() !== contactId)
-    await fs.writeFile(contactsPath, JSON.stringify(updatedContactsList))
-  }
-
-  return contactToRemove
+const removeContact = async contactId => {
+  const result = await mongodbApi.removeDocument(CURRENT_COLLECTION_NAME, contactId)
+  return result
 }
 
-const addContact = async (body) => {
-  const contactsList = await getContacts()
-  await fs.writeFile(contactsPath, JSON.stringify([...contactsList, body]))
-  return body
+const addContact = async body => {
+  const id = await mongodbApi.addDocument(CURRENT_COLLECTION_NAME, body)
+  const addedContact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, id)
+  return addedContact
 }
 
 const updateContact = async (contactId, body) => {
-  const contactsList = await getContacts()
-  const index = contactsList.findIndex(item => item.id.toString() === contactId)
+  const result = await mongodbApi.updateDocument(CURRENT_COLLECTION_NAME, contactId, body)
 
-  if (index === -1) {
-    return undefined
-  }
+  if (!result) return null
 
-  contactsList[index] = { ...contactsList[index], ...body }
-  await fs.writeFile(contactsPath, JSON.stringify(contactsList))
-
-  return contactsList[index]
+  const updatedContact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, contactId)
+  return updatedContact
 }
 
 module.exports = {

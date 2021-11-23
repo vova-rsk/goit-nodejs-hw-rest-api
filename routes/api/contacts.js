@@ -2,11 +2,12 @@ const express = require('express')
 const router = express.Router()
 const ctrl = require('../../controllers')
 const { contactValidation, controllerWrapper: wrapper } = require('../../middlewares')
+const mongoDbApi = require('../../services')
 
-router.get('/', wrapper(ctrl.getContacts))
-router.get('/:contactId', wrapper(ctrl.getContactById))
-router.post('/', contactValidation, wrapper(ctrl.postContact))
+router.get('/', wrapper(ctrl.getContacts, mongoDbApi))
+router.get('/:contactId', wrapper(ctrl.getContactById, mongoDbApi))
+router.post('/', contactValidation, wrapper(ctrl.postContact, mongoDbApi))
 router.delete('/:contactId', wrapper(ctrl.deleteContact))
-router.put('/:contactId', contactValidation, wrapper(ctrl.putContact))
+router.put('/:contactId', contactValidation, wrapper(ctrl.putContact, mongoDbApi))
 
 module.exports = router
