@@ -3,9 +3,9 @@ const createError = require('http-errors')
 
 const deleteContact = async (req, res) => {
   const { contactId } = req.params
-  const result = await api.removeContact(contactId)
+  const isRemoved = await api.removeContact(contactId)
 
-  if (!result) throw createError(404, 'Not found')
+  if (!isRemoved) throw createError(404, 'Not found')
 
   res.json({
     status: 'success',

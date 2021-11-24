@@ -1,7 +1,8 @@
 const api = require('../../model')
 
 const postContact = async (req, res) => {
-  const result = await api.addContact(req.body)
+  const addedContactId = await api.addContact(req.body)
+  const result = await api.getContactById(addedContactId)
 
   res.json({
     status: 'success',

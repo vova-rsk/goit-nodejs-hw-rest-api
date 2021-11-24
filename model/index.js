@@ -21,26 +21,17 @@ const addContact = async body => {
   if (!body.favorite) body.favorite = false
 
   const id = await mongodbApi.addDocument(CURRENT_COLLECTION_NAME, body)
-  const addedContact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, id)
-  return addedContact
+  return id.toString()
 }
 
 const updateContact = async (contactId, body) => {
   const result = await mongodbApi.updateDocument(CURRENT_COLLECTION_NAME, contactId, body)
-
-  if (!result) return null
-
-  const updatedContact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, contactId)
-  return updatedContact
+  return result || null
 }
 
 const updateStatusContact = async (contactId, body) => {
   const result = await mongodbApi.updateDocument(CURRENT_COLLECTION_NAME, contactId, body)
-  console.log(result)
-  if (!result) return null
-
-  const updatedContact = await mongodbApi.getDocumentById(CURRENT_COLLECTION_NAME, contactId)
-  return updatedContact
+  return result || null
 }
 
 module.exports = {
