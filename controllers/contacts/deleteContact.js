@@ -1,11 +1,11 @@
-const api = require('../../model')
+const { removeContact } = require('../../service')
 const createError = require('http-errors')
 
-const deleteContact = async (req, res) => {
+const removeOne = async (req, res) => {
   const { contactId } = req.params
-  const isRemoved = await api.removeContact(contactId)
+  const removedContact = await removeContact(contactId)
 
-  if (!isRemoved) throw createError(404, 'Not found')
+  if (!removedContact) throw createError(404, 'Not found')
 
   res.json({
     status: 'success',
@@ -14,4 +14,4 @@ const deleteContact = async (req, res) => {
   })
 }
 
-module.exports = deleteContact
+module.exports = removeOne

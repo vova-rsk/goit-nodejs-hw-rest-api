@@ -1,7 +1,7 @@
-const api = require('../../model')
+const { listContacts } = require('../../service')
 
-const getContacts = async (req, res) => {
-  const result = await api.listContacts()
+const getAll = async (req, res) => {
+  const result = await listContacts()
 
   res.json({
     status: 'success',
@@ -10,4 +10,4 @@ const getContacts = async (req, res) => {
   })
 }
 
-module.exports = getContacts
+module.exports = getAll

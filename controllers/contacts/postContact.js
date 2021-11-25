@@ -1,8 +1,7 @@
-const api = require('../../model')
+const { addContact } = require('../../service')
 
-const postContact = async (req, res) => {
-  const addedContactId = await api.addContact(req.body)
-  const result = await api.getContactById(addedContactId)
+const postOne = async (req, res) => {
+  const result = await addContact(req.body)
 
   res.json({
     status: 'success',
@@ -11,4 +10,4 @@ const postContact = async (req, res) => {
   })
 }
 
-module.exports = postContact
+module.exports = postOne

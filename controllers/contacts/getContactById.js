@@ -1,8 +1,8 @@
-const api = require('../../model')
+const { getContactById } = require('../../service')
 const createError = require('http-errors')
 
-const getContactById = async (req, res) => {
-  const result = await api.getContactById(req.params.contactId)
+const getOne = async (req, res) => {
+  const result = await getContactById(req.params.contactId)
 
   if (!result) throw createError(404, 'Not found')
 
@@ -13,4 +13,4 @@ const getContactById = async (req, res) => {
   })
 }
 
-module.exports = getContactById
+module.exports = getOne
