@@ -21,13 +21,13 @@ const addContact = async body => {
 }
 
 const updateContact = async (contactId, body) => {
-  const result = await Contact.findOneAndUpdate({ _id: contactId }, body, { new: true })
+  const result = await Contact.findByIdAndUpdate(contactId, body, { new: true })
   return result
 }
 
 const updateStatusContact = async (contactId, body) => {
   const { favorite } = body
-  const result = await Contact.findOneAndUpdate({ _id: contactId }, { favorite }, { new: true })
+  const result = await Contact.findByIdAndUpdate(contactId, { favorite }, { new: true })
   return result
 }
 
