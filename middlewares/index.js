@@ -1,8 +1,9 @@
-const { contactValidation, statusValidation } = require('./validation')
-const controllerWrapper = require('./controllerWrapper')
+const controllerWrapper = require('./wrapper')
+const auth = require('./auth')
+const validation = require('./validation')
 
 module.exports = {
-  contactValidation,
-  statusValidation,
-  controllerWrapper
+  ...validation,
+  controllerWrapper,
+  auth
 }

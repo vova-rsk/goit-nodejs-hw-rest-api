@@ -1,10 +1,5 @@
 const Joi = require('joi')
-
-const ERROR_MESSAGE = {
-  missingField: 'missing required name field',
-  invalidValue: 'invalid value',
-  missingFavoriteField: 'missing field favorite'
-}
+const ERROR_MESSAGE = require('./errorMessages')
 
 const contactSchema = Joi.object({
   name: Joi.string()
@@ -34,13 +29,4 @@ const contactSchema = Joi.object({
     .optional()
 })
 
-const statusSchema = Joi.object({
-  favorite: Joi.boolean()
-    .required()
-    .messages({
-      'boolean.base': ERROR_MESSAGE.invalidValue,
-      'any.required': ERROR_MESSAGE.missingFavoriteField
-    })
-})
-
-module.exports = { contactSchema, statusSchema }
+module.exports = contactSchema
