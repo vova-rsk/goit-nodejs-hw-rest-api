@@ -1,3 +1,7 @@
-const ctrl = require('./contacts')
+const contactsControllers = require('./contacts')
+const usersControllers = require('./users')
 
-module.exports = ctrl
+module.exports = {
+  ...contactsControllers,
+  ...usersControllers
+}

@@ -2,12 +2,13 @@ const mongoose = require('mongoose')
 const createError = require('http-errors')
 const { Contact } = require('../../model')
 
-const getContactById = async (req, res) => {
+const updateStatusContact = async (req, res) => {
+  const { favorite } = req.body
   const { _id: owner } = req.user
   const _id = mongoose.Types.ObjectId(req.params.contactId)
 
   const result = await Contact
-    .findOne({ _id, owner })
+    .findOneAndUpdate({ _id, owner }, { favorite }, { new: true })
     .select({ createdAt: 0, updatedAt: 0, owner: 0 })
 
   if (!result) throw createError(404, 'Not found')
@@ -19,4 +20,4 @@ const getContactById = async (req, res) => {
   })
 }
 
-module.exports = getContactById
+module.exports = updateStatusContact
