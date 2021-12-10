@@ -10,16 +10,19 @@ const loginUser = async (req, res) => {
 
   const result = await User
     .findByIdAndUpdate(id, { token })
-    .select({ email: 1, subscription: 1, avatarURL: 1 })
+    .select({ email: 1, subscription: 1, avatarURL: 1, token: 1 })
 
-  res.status(201).json({
+  const { email: userEmail, subscription, avatarURL, token: userToken } = result
+
+  res.status(200).json({
     status: 'success',
-    code: 201,
+    code: 200,
     data: {
-      token,
+      token: userToken,
       user: {
-        email: result.email,
-        subscription: result.subscription
+        email: userEmail,
+        subscription,
+        avatarURL
       }
     }
   })
