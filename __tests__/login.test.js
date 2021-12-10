@@ -3,12 +3,12 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const { User } = require('../model')
 
-const PATH = '/api/users/login'
+const PATH = '/users/login'
 
 const loginController = async (req, res) => {
   try {
     const { id: mId, email: mEmail } = req.body
-
+    console.log(req.body)
     const newToken = jwt.sign({ id: mId, email: mEmail }, 'SOME_SECRET_KEY', { expiresIn: '12h' })
 
     const mUser = {
@@ -21,9 +21,7 @@ const loginController = async (req, res) => {
 
     jest.spyOn(User, 'findByIdAndUpdate').mockImplementationOnce(() => mUser)
 
-    const result = await User
-      .findByIdAndUpdate(mId, { token: newToken }, { new: true })
-      .select({ email: 1, subscription: 1, avatarURL: 1, token: 1 })
+    const result = await User.findByIdAndUpdate(mId, { token: newToken }, { new: true })
 
     const { email, subscription, avatarURL, token } = result
 
