@@ -3,6 +3,8 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const { User } = require('../model')
 
+const PATH = '/api/users/login'
+
 const loginController = async (req, res) => {
   try {
     const { id: mId, email: mEmail } = req.body
@@ -18,7 +20,10 @@ const loginController = async (req, res) => {
     }
 
     jest.spyOn(User, 'findByIdAndUpdate').mockImplementationOnce(() => mUser)
-    const result = await User.findByIdAndUpdate(mId, { token: newToken })
+
+    const result = await User
+      .findByIdAndUpdate(mId, { token: newToken }, { new: true })
+      .select({ email: 1, subscription: 1, avatarURL: 1, token: 1 })
 
     const { email, subscription, avatarURL, token } = result
 
@@ -48,7 +53,7 @@ const loginController = async (req, res) => {
 const app = express()
 
 app.use(express.json())
-app.post('/api/users/login', loginController)
+app.post(PATH, loginController)
 
 describe('User login controller testing', () => {
   let testServer
@@ -61,7 +66,7 @@ describe('User login controller testing', () => {
     const mId = '12345'
 
     const response = await request(testServer)
-      .post('/api/users/login')
+      .post(PATH)
       .send({ id: mId, email: mEmail })
 
     expect(response.status).toBe(200)

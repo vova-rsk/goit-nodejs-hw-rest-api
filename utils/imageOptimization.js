@@ -8,6 +8,7 @@ const avatarOptimization = async (path) => {
   const avatar = await Jimp.read(path)
 
   avatar
+    .cover(IMAGE_WIDTH, IMAGE_HEIGHT)
     .resize(IMAGE_WIDTH, IMAGE_HEIGHT)
     .quality(QUALITY_PERCENTAGE)
     .write(path)

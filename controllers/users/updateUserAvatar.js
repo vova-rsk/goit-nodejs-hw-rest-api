@@ -17,7 +17,7 @@ const updateUserAvatar = async (req, res) => {
     imageOptimization(destinationName)
 
     const { avatarURL } = await User
-      .findByIdAndUpdate(id, { avatarURL: path.join('avatars', newUniqueName) })
+      .findByIdAndUpdate(id, { avatarURL: path.join('avatars', newUniqueName) }, { new: true })
       .select({ email: 1, subscription: 1, avatarURL: 1 })
 
     res.json({

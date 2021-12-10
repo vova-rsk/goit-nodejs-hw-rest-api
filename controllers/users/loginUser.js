@@ -9,7 +9,7 @@ const loginUser = async (req, res) => {
   const token = jwt.sign({ id, email }, SECRET_KEY, { expiresIn: '12h' })
 
   const result = await User
-    .findByIdAndUpdate(id, { token })
+    .findByIdAndUpdate(id, { token }, { new: true })
     .select({ email: 1, subscription: 1, avatarURL: 1, token: 1 })
 
   const { email: userEmail, subscription, avatarURL, token: userToken } = result
