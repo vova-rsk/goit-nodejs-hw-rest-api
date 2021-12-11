@@ -1,15 +1,22 @@
 const jwt = require('jsonwebtoken')
+const createError = require('http-errors')
 const { User } = require('../../model')
 
 const SECRET_KEY = process.env.SECRET
 
 const loginUser = async (req, res) => {
-  const { id, email } = req.body
+  const { email, password } = req.body
 
-  const token = jwt.sign({ id, email }, SECRET_KEY, { expiresIn: '12h' })
+  const user = await User
+    .findOne({ email })
+    .select({ email: 1, password: 1 })
+
+  if (!user || !user.comparePassword(password)) throw createError(401, 'Email or password is wrong')
+
+  const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '12h' })
 
   const result = await User
-    .findByIdAndUpdate(id, { token }, { new: true })
+    .findByIdAndUpdate(user.id, { token }, { new: true })
     .select({ email: 1, subscription: 1, avatarURL: 1, token: 1 })
 
   const { email: userEmail, subscription, avatarURL, token: userToken } = result
