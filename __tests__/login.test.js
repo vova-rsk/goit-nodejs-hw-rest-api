@@ -6,22 +6,42 @@ const { User } = require('../model')
 const PATH = '/users/login'
 
 const loginController = async (req, res) => {
-  try {
-    const { id: mId, email: mEmail } = req.body
-    console.log(req.body)
-    const newToken = jwt.sign({ id: mId, email: mEmail }, 'SOME_SECRET_KEY', { expiresIn: '12h' })
+  const mId = '12345'
+  const mSubscription = 'text'
+  const mAvatarURL = 'link'
 
-    const mUser = {
+  const { email: mEmail, password: mPassword } = req.body
+
+  const mShortUserInfo = {
+    id: mId,
+    email: mEmail,
+    password: mPassword
+  }
+
+  try {
+    jest.spyOn(User, 'findOne').mockImplementationOnce(() => mShortUserInfo)
+    const user = await User.findOne({ email: mEmail })
+
+    if (!user || user.password !== mPassword) {
+      const error = new Error('Email or password is wrong')
+      error.status = 401
+      throw error
+    }
+
+    const newToken = jwt.sign({ id: user.id, email: user.email }, 'SOME_SECRET_KEY', { expiresIn: '12h' })
+
+    const mFullUserInfo = {
       id: mId,
       email: mEmail,
-      subscription: 'text',
-      avatarURL: 'link',
+      subscription: mSubscription,
+      avatarURL: mAvatarURL,
       token: newToken
     }
 
-    jest.spyOn(User, 'findByIdAndUpdate').mockImplementationOnce(() => mUser)
+    jest.spyOn(User, 'findByIdAndUpdate').mockImplementationOnce(() => mFullUserInfo)
+    const result = await User.findByIdAndUpdate(user.id, { token: newToken }, { new: true })
 
-    const result = await User.findByIdAndUpdate(mId, { token: newToken }, { new: true })
+    if (!result) throw new Error()
 
     const { email, subscription, avatarURL, token } = result
 
@@ -61,11 +81,11 @@ describe('User login controller testing', () => {
 
   test('added valid email & id to request', async() => {
     const mEmail = 'test@mail.com'
-    const mId = '12345'
+    const mPassword = 'password'
 
     const response = await request(testServer)
       .post(PATH)
-      .send({ id: mId, email: mEmail })
+      .send({ email: mEmail, password: mPassword })
 
     expect(response.status).toBe(200)
 
