@@ -2,7 +2,7 @@ const { User } = require('../../model')
 
 const signUpUser = async (req, res) => {
   const result = await User.create(req.body)
-  const { email, subscription } = result
+  const { email, subscription, avatarURL } = result
 
   res.status(201).json({
     status: 'success',
@@ -10,7 +10,8 @@ const signUpUser = async (req, res) => {
     data: {
       user: {
         email,
-        subscription
+        subscription,
+        avatarURL
       }
     }
   })

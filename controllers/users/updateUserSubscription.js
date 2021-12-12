@@ -6,7 +6,7 @@ const updateUserSubscription = async (req, res) => {
 
   const result = await User
     .findByIdAndUpdate(id, { subscription }, { new: true })
-    .select({ email: 1, subscription: 1 })
+    .select({ email: 1, subscription: 1, avatarURL: 1 })
 
   res.json({
     status: 'success',

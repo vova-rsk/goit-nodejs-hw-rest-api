@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose')
 const bcrypt = require('bcrypt')
+const gravatar = require('gravatar')
 
 const userSchema = new Schema({
   password: {
@@ -16,6 +17,9 @@ const userSchema = new Schema({
     enum: ['starter', 'pro', 'business'],
     default: 'starter'
   },
+  avatarURL: {
+    type: String
+  },
   token: {
     type: String,
     default: null,
@@ -25,6 +29,7 @@ const userSchema = new Schema({
 userSchema.pre('save', function() {
   if (this.isNew) {
     this.password = bcrypt.hashSync(this.password, bcrypt.genSaltSync(10))
+    this.avatarURL = gravatar.url(this.email, { protocol: 'http', s: '250', d: 'robohash' })
   }
 })
 

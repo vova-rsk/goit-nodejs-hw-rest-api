@@ -5,7 +5,8 @@ const errorMessages = {
   missingPasswordField: 'missing field password',
   missingSubscriptionField: 'missing field subscription',
   invalidPasswordFormat: 'invalid password format',
-  invalidEmailFormat: 'invalid email format'
+  invalidEmailFormat: 'invalid email format',
+  missingAvatarField: 'missing field avatar'
 }
 
 module.exports = errorMessages

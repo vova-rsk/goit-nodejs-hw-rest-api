@@ -5,7 +5,7 @@ const logoutUser = async (req, res) => {
   const { id } = req.user
   const result = await User
     .findByIdAndUpdate(id, { token: null })
-    .select({ email: 1, subscription: 1 })
+    .select({ email: 1, subscription: 1, avatarURL: 1 })
 
   if (!result) throw createError(401, 'Not authorized')
 

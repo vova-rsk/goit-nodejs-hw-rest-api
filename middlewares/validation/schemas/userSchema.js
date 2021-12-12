@@ -24,6 +24,11 @@ const userSchema = Joi.object({
     .messages({
       'any.only': ERROR_MESSAGE.invalidValue
     }),
+  avatarURL: Joi.string()
+    .optional()
+    .messages({
+      'any.required': ERROR_MESSAGE.missingAvatarField
+    }),
   token: Joi.string()
     .optional()
 })
