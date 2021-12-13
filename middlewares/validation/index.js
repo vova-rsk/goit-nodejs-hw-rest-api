@@ -4,6 +4,7 @@ const signupValidation = require('./signupValidation')
 const loginValidation = require('./loginValidation')
 const subscriptionValidation = require('./subscriptionValidation')
 const avatarValidation = require('./avatarValidation')
+const accountValidation = require('./accountValidation')
 
 module.exports = {
   contactValidation,
@@ -11,5 +12,6 @@ module.exports = {
   signupValidation,
   loginValidation,
   subscriptionValidation,
-  avatarValidation
+  avatarValidation,
+  accountValidation
 }

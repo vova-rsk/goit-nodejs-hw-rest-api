@@ -8,8 +8,12 @@ const {
   loginValidation,
   subscriptionValidation,
   avatarValidation,
+  accountValidation,
   controllerWrapper: wrapper
 } = require('../../middlewares')
+
+router.get('/verify/:verificationToken', wrapper(ctrl.userVerification))
+router.post('/verify', wrapper(accountValidation), wrapper(ctrl.userReVerification))
 
 router.post('/signup', wrapper(signupValidation), wrapper(ctrl.signUpUser))
 router.post('/login', wrapper(loginValidation), wrapper(ctrl.loginUser))
