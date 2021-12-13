@@ -12,7 +12,7 @@ const loginUser = async (req, res) => {
     .select({ email: 1, password: 1, verify: 1 })
 
   if (!user || !user.comparePassword(password)) throw createError(401, 'Email or password is wrong')
-  if (!user.verify) throw createError(400, 'Access restricted. Account is not validated')
+  if (!user.verify) throw createError(403, 'Access restricted. Account is not verificated')
 
   const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '12h' })
 
