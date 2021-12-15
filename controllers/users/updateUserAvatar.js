@@ -1,7 +1,7 @@
 const fs = require('fs').promises
 const path = require('path')
 const { User } = require('../../model')
-const imageOptimization = require('../../utils/imageOptimization')
+const { imageOptimization, createUrl } = require('../../utils')
 
 const storageDir = path.join(process.cwd(), 'public', 'avatars')
 
@@ -11,14 +11,7 @@ const updateUserAvatar = async (req, res) => {
   const newUniqueName = [id, fileExtension].join('.')
   const destinationName = path.join(storageDir, newUniqueName)
 
-  const urlParams = {
-    protocol: (req.connection.encrypted ? 'https' : 'http') + ':',
-    host: req.headers.host,
-    path: 'avatars',
-    filename: newUniqueName
-  }
-
-  const urlPrepack = Object.values(urlParams).join('/')
+  const url = createUrl(req, 'avatars', newUniqueName)
 
   try {
     await fs.rename(temporaryName, destinationName)
@@ -26,7 +19,7 @@ const updateUserAvatar = async (req, res) => {
     imageOptimization(destinationName)
 
     const { avatarURL } = await User
-      .findByIdAndUpdate(id, { avatarURL: new URL(urlPrepack) }, { new: true })
+      .findByIdAndUpdate(id, { avatarURL: url }, { new: true })
       .select({ email: 1, subscription: 1, avatarURL: 1 })
 
     res.json({
